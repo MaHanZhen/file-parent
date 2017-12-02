@@ -57,7 +57,7 @@ public class LoginServiceImpl implements LoginService {
         String key = REDIS_USER_SESSION_KEY + ":" + token;
         jedisClient.set(key, JsonUtils.objectToJson(user));
         jedisClient.expire(key, SSO_SESSION_EXPIRE);
-        CookieUtils.setCookie(request, response, "TT_TOKEN", token);
+        CookieUtils.setCookie(request, response, "FILE_TOKEN", token);
 
         return Msg.ok(token);
     }

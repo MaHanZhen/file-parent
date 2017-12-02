@@ -3,8 +3,11 @@ package com.mhz.sso.controller;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 import com.mhz.common.utils.Msg;
+import com.mhz.sso.pojo.BootstrapValidatorRemote;
+import com.mhz.sso.service.CheckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -15,14 +18,17 @@ import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 
 @Controller
-@RequestMapping("/checkCode")
-public class CheckCodeController {
+@RequestMapping("/check")
+public class CheckController {
 
     @Autowired
     private Producer captchaProducer;
 
-    @RequestMapping("/get")
-    public Msg getCheckCodeImage(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    @Autowired
+    private CheckService checkService;
+
+    @RequestMapping("/getCheckCode")
+    public Msg getCheckCodeImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
         response.setDateHeader("Expires", 0);
         response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
@@ -44,9 +50,15 @@ public class CheckCodeController {
         return null;
     }
 
-    @RequestMapping("/check")
+    @RequestMapping("/code")
     @ResponseBody
-    public Msg check(){
+    public Msg check() {
         return null;
+    }
+
+    @RequestMapping("/data/{type}")
+    @ResponseBody
+    public BootstrapValidatorRemote checkData(@PathVariable() Integer type, String username, String email) {
+        return checkService.checkData(type, username, email);
     }
 }

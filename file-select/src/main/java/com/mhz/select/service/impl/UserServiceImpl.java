@@ -21,8 +21,8 @@ public class UserServiceImpl implements UserService {
     public EasyUIDataGridResult getUserList(Integer page, Integer rows) {
 
         TbUserExample example = new TbUserExample();
-        TbUserExample.Criteria criteria = example.createCriteria();
-        criteria.andStatusNotEqualTo((byte)0);
+        example.createCriteria().andStatusNotEqualTo((byte)0);
+        example.setOrderByClause("id desc ");
         PageHelper.startPage(page, rows);
         List<TbUser> tbUsers = userMapper.selectByExample(example);
         EasyUIDataGridResult gridResult = new EasyUIDataGridResult();
