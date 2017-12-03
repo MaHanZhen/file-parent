@@ -122,8 +122,13 @@
                     var $form = $(e.target);
                     var bv = $form.data('bootstrapValidator');
                     // Use Ajax to submit form data
-                    $.post($form.attr('action'), $form.serialize(), function (result) {
-                        console.log(result);
+                    $.post($form.attr('action'), $form.serialize(), function (msg) {
+                        if (msg.status == 200) {
+                            alert("注册成功");
+                            location.href = "/login";
+                        } else {
+                            $("#error").html(msg.msg);
+                        }
                     }, 'json');
                 });
 
@@ -191,7 +196,7 @@
                 <div class="form-group">
                     <div class="col-md-12">
                         <input type="submit" value="注册" class="btn btn-info">
-                        <span id="error" style="color: red">error</span>
+                        <span id="error" style="color: red"></span>
                         <a href="/login" class="pull-right">已有账号，立即登录</a>
                     </div>
                 </div>

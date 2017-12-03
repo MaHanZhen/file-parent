@@ -33,6 +33,13 @@ public class LoginServiceImpl implements LoginService {
     @Value("${SSO_SESSION_EXPIRE}")
     private Integer SSO_SESSION_EXPIRE;
 
+    @Value("${FILE_PORTAL_URL}")
+    private String FILE_PORTAL_URL;
+    @Value("${FILE_MANAGER_URL}")
+    private String FILE_MANAGER_URL;
+    @Value("${FILE_SSO_URL}")
+    private String FILE_SSO_URL;
+
     @Override
     public Msg doLogin(String username, String password, HttpServletRequest request, HttpServletResponse response) {
 
@@ -59,7 +66,18 @@ public class LoginServiceImpl implements LoginService {
         jedisClient.expire(key, SSO_SESSION_EXPIRE);
         CookieUtils.setCookie(request, response, "FILE_TOKEN", token);
 
-        return Msg.ok(token);
+        String url;
+        switch (user.getrId()) {
+            case 1:
+                url = FILE_MANAGER_URL;
+                break;
+            default:
+                url = FILE_PORTAL_URL;
+                break;
+        }
+
+        return Msg.ok(url);
+
     }
 
     @Override
@@ -71,8 +89,17 @@ public class LoginServiceImpl implements LoginService {
             return Msg.build(400, "此session已经过期，请重新登录");
         }
         jedisClient.expire(key, SSO_SESSION_EXPIRE);
-        TbUser user = JsonUtils.jsonToPojo(jsonUser,TbUser.class);
+        TbUser user = JsonUtils.jsonToPojo(jsonUser, TbUser.class);
 
         return Msg.ok(user);
+    }
+
+    @Override
+    public Msg doLogout(String token, HttpServletRequest request, HttpServletResponse response) {
+
+        String key = REDIS_USER_SESSION_KEY + ":" + token;
+        jedisClient.del(key);
+        CookieUtils.deleteCookie(request, response, "FILE_TOKEN");
+        return Msg.ok(FILE_SSO_URL);
     }
 }

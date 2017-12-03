@@ -40,4 +40,9 @@ public class UserController {
         return registerService.doRegister(user);
     }
 
+    @RequestMapping("/logout")
+    @ResponseBody
+    public Msg logout(String token, HttpServletRequest request, HttpServletResponse response) {
+        return loginService.doLogout(token, request, response);
+    }
 }
